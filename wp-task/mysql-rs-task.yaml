@@ -1,0 +1,39 @@
+apiVersion: extensions/v1beta1
+kind: ReplicaSet
+metadata:
+  name: mysql-rs
+  labels:
+    name: db-myclaim
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: db-myclaim
+  template:
+    metadata:
+      labels:
+        name: db-myclaim
+    spec:
+      volumes:
+      - name: myclaim
+        persistentVolumeClaim:
+          claimName: myclaim
+      containers:
+      - name: mysql
+        image: mysql:5.6
+        env:
+        - name: MYSQL_DATABASE
+          value: myclaim
+        - name: MYSQL_USER
+          value: wp-user-adilet
+        - name: MYSQL_ROOT_PASSWORD
+          value: password
+        - name: MYSQL_PASSWORD
+          value: password  
+        ports:
+        - containerPort: 3306
+          protocol: TCP
+        volumeMounts:
+        - name: myclaim
+          mountPath: /var/lib/mysql
+
